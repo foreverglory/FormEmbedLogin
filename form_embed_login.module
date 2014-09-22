@@ -1,0 +1,31 @@
+<?php
+
+function form_embed_login_form_alter(&$form, &$form_state, &$form_id) {
+  if (strpos($form_id, '_node_form') !== FALSE) {
+    if (form_embed_login_set_access() == NODE_ACCESS_ALLOW) {
+      $login_form = drupal_get_form('user_login_block');
+      $form['#suffix'] = '<div class="embed-login">' . drupal_render($login_form) . '</div>';
+      $form['#validate'][] = 'form_embed_login_validate';
+    }
+  }
+}
+
+function form_embed_login_validate(&$form, &$form_state) {
+  if (user_is_anonymous() && form_embed_login_set_access() == NODE_ACCESS_ALLOW) {
+    form_set_error('', t('请先登陆'));
+  }
+}
+
+function form_embed_login_node_access($node, $op, $account) {
+  if ($op == 'create' && user_is_anonymous()) {
+    return form_embed_login_set_access(NODE_ACCESS_ALLOW);
+  }
+}
+
+function form_embed_login_set_access($node_access = NULL) {
+  $access = &drupal_static('form_embed_login_node_access', NODE_ACCESS_IGNORE);
+  if (!empty($node_access)) {
+    $access = $node_access;
+  }
+  return $access;
+}

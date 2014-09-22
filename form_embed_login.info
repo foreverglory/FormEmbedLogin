@@ -1,0 +1,7 @@
+name = Form Embed Login
+description = Anonymous handle form, embed login form
+package = Form Embed Login
+
+core = 7.x
+version = 7.x-1.0
+project = form_embed_login
