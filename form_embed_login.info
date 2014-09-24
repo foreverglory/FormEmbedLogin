@@ -1,6 +1,7 @@
 name = Form Embed Login
 description = Anonymous handle form, embed login form
 package = Form Embed Login
+configure = admin/config/user-interface/form-embed-login
 
 core = 7.x
 version = 7.x-1.0

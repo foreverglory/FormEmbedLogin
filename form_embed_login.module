@@ -1,10 +1,29 @@
 <?php
 
+define('FORM_EMBED_LOGIN_DISPLAY_ALWAYS', 0);
+define('FORM_EMBED_LOGIN_DISPLAY_CLICK', 1);
+
+function form_embed_login_menu() {
+  $menus = array();
+  $menus['admin/config/user-interface/form-embed-login'] = array(
+    'title' => t('Settings QRCode'),
+    'description' => t('Settings Form Embed Login'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('form_embed_login_settings'),
+    'access arguments' => array('form embed login settings'),
+    'file' => 'form_embed_login.admin.inc'
+  );
+  return $menus;
+}
+
 function form_embed_login_form_alter(&$form, &$form_state, &$form_id) {
   if (strpos($form_id, '_node_form') !== FALSE) {
     if (form_embed_login_set_access() == NODE_ACCESS_ALLOW) {
       $login_form = drupal_get_form('user_login_block');
       $form['#suffix'] = '<div class="embed-login">' . drupal_render($login_form) . '</div>';
+      if (variable_get('form_embed_login_display', FORM_EMBED_LOGIN_DISPLAY_ALWAYS) == FORM_EMBED_LOGIN_DISPLAY_CLICK) {
+        $form['#attached']['js'][] = drupal_get_path('module', 'form_embed_login') . '/form_embed_login.js';
+      }
       $form['#validate'][] = 'form_embed_login_validate';
     }
   }
@@ -12,7 +31,7 @@ function form_embed_login_form_alter(&$form, &$form_state, &$form_id) {
 
 function form_embed_login_validate(&$form, &$form_state) {
   if (user_is_anonymous() && form_embed_login_set_access() == NODE_ACCESS_ALLOW) {
-    form_set_error('', t('请先登陆'));
+    form_set_error('', t('Please login first'));
   }
 }
 
@@ -28,4 +47,14 @@ function form_embed_login_set_access($node_access = NULL) {
     $access = $node_access;
   }
   return $access;
+}
+
+function form_embed_login_permission() {
+  $perms = array(
+    'form embed login settings' => array(
+      'title' => t('Form Embed Login settings'),
+      'description' => t('Anonymous handle form, embed login form settings'),
+    )
+  );
+  return $perms;
 }
