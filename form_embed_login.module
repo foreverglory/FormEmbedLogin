@@ -6,7 +6,7 @@ define('FORM_EMBED_LOGIN_DISPLAY_CLICK', 1);
 function form_embed_login_menu() {
   $menus = array();
   $menus['admin/config/user-interface/form-embed-login'] = array(
-    'title' => t('Settings QRCode'),
+    'title' => t('Settings Form Embed Login'),
     'description' => t('Settings Form Embed Login'),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('form_embed_login_settings'),
