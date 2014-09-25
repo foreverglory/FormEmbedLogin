@@ -20,7 +20,10 @@ function form_embed_login_form_alter(&$form, &$form_state, &$form_id) {
   if (strpos($form_id, '_node_form') !== FALSE) {
     if (form_embed_login_set_access() == NODE_ACCESS_ALLOW) {
       $login_form = drupal_get_form('user_login_block');
-      $form['#suffix'] = '<div class="embed-login">' . drupal_render($login_form) . '</div>';
+      $form['#suffix'] = '<div class="embed-login">'
+          . (variable_get('form_embed_login_message') ? '<div class="embed-login-message">' . variable_get('form_embed_login_message') . '</div>' : '')
+          . (variable_get('form_embed_login_close') ? '<span class="embed-login-close">x</span>' : '')
+          . drupal_render($login_form) . '</div>';
       if (variable_get('form_embed_login_display', FORM_EMBED_LOGIN_DISPLAY_ALWAYS) == FORM_EMBED_LOGIN_DISPLAY_CLICK) {
         $form['#attached']['js'][] = drupal_get_path('module', 'form_embed_login') . '/form_embed_login.js';
       }
